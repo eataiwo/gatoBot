@@ -133,7 +133,10 @@ class Powertrain:
 
     def wait_for_command(self, command=' '):
         pass
-
+    
+    def stop(self):
+        GPIO.output(self.step_pins, False)
+        GPIO.output(self.direction_pins, False)
     def setup(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
