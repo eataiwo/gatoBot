@@ -28,25 +28,26 @@ def index():
     return render_template('index.html', server_ip=server_ip)
 
 
+
 @app.route('/<changepin>', methods=['POST'])
 def reroute(changepin):
     changePin = int(changepin)
 
     if changePin == 1:
-        dexter.go('left', distance, speed, 0.05)
+        dexter.go_remote('left', speed, 0.05)
     elif changePin == 2:
-        dexter.go('forward', distance, speed, 0.05, )
+        dexter.go_remote('forward', speed, 0.05, )
     elif changePin == 3:
-        dexter.go('right', distance, speed, 0.05)
+        dexter.go_remote('right', speed, 0.05)
     elif changePin == 4:
-        dexter.go('backward', distance, speed, 0.05)
+        dexter.go_remote('backward', speed, 0.05)
     elif changePin == 5:
         dexter.stop()
     else:
         print("Wrong command")
 
     response = make_response(redirect(url_for('index')))
-    return (response)
+    return response
 
 
 app.run(debug=True, host='0.0.0.0', port=8000)

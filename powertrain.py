@@ -6,9 +6,9 @@ Numbering/Naming convention for wheels on Dexter
 
 import sys
 import RPi.GPIO as GPIO
-from step_converter import dist_2_steps_wheel
-from step_converter import steps_2_dist_wheel
-from speed_converter import percentage_to_step_delay
+from utils.step_converter import dist_2_steps_wheel
+from utils.step_converter import steps_2_dist_wheel
+from utils.speed_converter import percentage_to_step_delay
 from time import sleep
 from utils.Motor import degree_calc
 
@@ -64,6 +64,34 @@ class Powertrain:
             GPIO.output(self.step_pins, False)
             GPIO.output(self.direction_pins, False)
 
+    def go_remote(self, direction='forward', speed=50, initdelay=.05, verbose=False):
+        stepdelay = percentage_to_step_delay(speed)
+        GPIO.output(self.direction_pins, directions[direction])
+        sleep(initdelay)
+        try:
+            while True:
+                GPIO.output(self.step_pins, True)
+                sleep(stepdelay)
+                GPIO.output(self.step_pins, False)
+                sleep(stepdelay)
+        except KeyboardInterrupt:
+            print("User Keyboard Interrupt : RpiMotorLib:")
+        except Exception as motor_error:
+            print(sys.exc_info()[0])
+            print(motor_error)
+            print("RpiMotorLib  :(is it here)  Unexpected error:")
+        finally:
+            # print report status
+            if verbose:
+                # TODO: Add a counter for the number of steps travelled - maybe when I have encoders
+                print('\nMotor Run finished, Details:\n')
+                print(f'Direction = {direction}')
+                #print(f"Number of steps = {steps}")
+                print(f"Step Delay = {stepdelay}")
+                print(f"Initial delay = {initdelay}")
+                #print(f"Rotation of wheels in degrees = {degree_calc(steps)}")
+                #print(f"Total distance travelled = {steps_2_dist_wheel(steps)}m ")
+
     def go_steps(self, direction='forward', steps=100, stepdelay=.05, initdelay=.05, verbose=False):
         GPIO.output(self.direction_pins, directions[direction])
         sleep(initdelay)
@@ -102,17 +130,6 @@ class Powertrain:
         # Make a converter of degrees to steps again from a calibration 
         # I remember roughly 1066 steps was a full rotation for Dexter
         pass
-
-    def stop(self):
-        try:
-            GPIO.output(self.step_pins, False)
-            GPIO.output(self.direction_pins, False)
-        except KeyboardInterrupt:
-            print("User Keyboard Interrupt : RpiMotorLib:")
-        except Exception as motor_error:
-            print(sys.exc_info()[0])
-            print(motor_error)
-            print("RpiMotorLib  :(is it here)  Unexpected error:")
 
     def wait_for_command(self, command=' '):
         pass

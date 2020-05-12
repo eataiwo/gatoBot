@@ -23,6 +23,8 @@ dexter.go('left', distance, speed, 1)
 dexter.go_steps('tots_cw', 1066, 0.005, 1)
 dexter.go_steps('tots_ccw', 1066,0.005, 1)
 
+
+GPIO.cleanup()
 # for key in dexter.directions.keys():
 #     try:
 #         dexter.go(key, distance, speed, 1, True)
