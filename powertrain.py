@@ -6,11 +6,11 @@ Numbering/Naming convention for wheels on Dexter
 
 import sys
 import RPi.GPIO as GPIO
-from utils.step_converter import dist_2_steps_wheel
-from utils.step_converter import steps_2_dist_wheel
-from utils.speed_converter import percentage_to_step_delay
+from step_converter import dist_2_steps_wheel
+from step_converter import steps_2_dist_wheel
+from speed_converter import percentage_to_step_delay
 from time import sleep
-from utils.Motor import degree_calc
+#from utils.Motor import degree_calc
 
 # Turning is relative to if you were looking down onto the robot from above
 directions = {'forward': (0, 1, 0, 1), 'backward': (1, 0, 1, 0),

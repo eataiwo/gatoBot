@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import RPi.GPIO as GPIO
-import motors
+#import motors
 import socket
 from powertrain import Powertrain
 
 direction_pins = (27, 23, 19, 20)
 step_pins = (22, 24, 26, 21)
-GPIO.setmode(GPIO.BOARD)
 
 dexter = Powertrain(direction_pins, step_pins)
 dexter.setup()
