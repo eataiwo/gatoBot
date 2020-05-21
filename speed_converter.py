@@ -13,7 +13,7 @@ low_stepdelay = 0.02  # Slowest speed
 
 # This type of scaling is imperfect but best I can do without any accurate speed measurements
 
-def stepdelay_to_percent(stepdelay):
+def step_delay_to_percentage(stepdelay):
     if upp_stepdelay <= stepdelay <= low_stepdelay:
         return 100 - (((stepdelay - upp_stepdelay) * 100) / (low_stepdelay - upp_stepdelay))
     else:

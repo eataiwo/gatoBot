@@ -11,7 +11,6 @@ dexter = Powertrain(direction_pins, step_pins)
 dexter.setup()
 
 speed = 80
-distance = 0.05
 
 # Get server ip
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

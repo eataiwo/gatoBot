@@ -32,7 +32,7 @@ class Powertrain:
         self.step_pins = step_pins
         self.directions = directions
         self.drive = False
-        self.remote_direction
+        self.remote_direction = ''
 
         # TODO: Change direction to self.direction and see if it works
 
@@ -72,11 +72,12 @@ class Powertrain:
 
     def go_remote(self, speed=50, initdelay=.05, verbose=False):
         stepdelay = percentage_to_step_delay(speed)
+        print(f'Speed is {speed}, and stepdelay is {stepdelay}')
         self.drive = True
         try:
             while self.drive:
                 # TODO: Finish implementation of if statements for directions
-                self.go_steps(self.remote_direction, 1, stepdelay, initdelay, True)
+                self.go_steps(self.remote_direction, 1, stepdelay, 0)
         except KeyboardInterrupt:
             print("User Keyboard Interrupt : Remote Controller")
         except Exception as remote_error:
