@@ -9,6 +9,7 @@ import RPi.GPIO as GPIO
 from step_converter import dist_2_steps_wheel
 from step_converter import steps_2_dist_wheel
 from speed_converter import percentage_to_step_delay
+from speed_converter import step_delay_to_percentage
 from time import sleep
 
 # from utils.Motor import degree_calc
@@ -23,8 +24,6 @@ directions = {'forward': (0, 1, 0, 1), 'backward': (1, 0, 1, 0),
               'cor_left_cw:': (' ', 1, ' ', 1), 'cor_left_ccw': (' ', 0, ' ', 0),
               'tur_rear_ax_cw': (0, 0, ' ', ' '), 'tur_rear_ax_ccw': (1, 1, ' ', ' '),
               'tur_front_ax_cw': (' ', ' ', 0, 0), 'tur_front_ax_ccw': (' ', ' ', 1, 1)}
-global drive
-drive = False
 
 
 class Powertrain:
@@ -32,6 +31,10 @@ class Powertrain:
         self.direction_pins = direction_pins
         self.step_pins = step_pins
         self.directions = directions
+        self.drive = False
+        self.remote_direction
+
+        # TODO: Change direction to self.direction and see if it works
 
     def go(self, direction='forward', distance=0.1, speed=30, initdelay=.05, verbose=False):
         steps = dist_2_steps_wheel(distance)[0]
@@ -67,37 +70,23 @@ class Powertrain:
             GPIO.output(self.step_pins, False)
             GPIO.output(self.direction_pins, False)
 
-    def go_remote(self, direction='forward', speed=50, initdelay=.05, verbose=False):
+    def go_remote(self, speed=50, initdelay=.05, verbose=False):
         stepdelay = percentage_to_step_delay(speed)
-        GPIO.output(self.direction_pins, directions[direction])
-        sleep(initdelay)
-        global drive
-        drive = True
+        self.drive = True
         try:
-            while drive:
-                GPIO.output(self.step_pins, True)
-                sleep(stepdelay)
-                GPIO.output(self.step_pins, False)
-                sleep(stepdelay)
+            while self.drive:
+                # TODO: Finish implementation of if statements for directions
+                self.go_steps(self.remote_direction, 1, stepdelay, initdelay, True)
         except KeyboardInterrupt:
-            print("User Keyboard Interrupt : RpiMotorLib:")
-        except Exception as motor_error:
+            print("User Keyboard Interrupt : Remote Controller")
+        except Exception as remote_error:
             print(sys.exc_info()[0])
-            print(motor_error)
-            print("RpiMotorLib  :(is it here)  Unexpected error:")
+            print(remote_error)
+            print("Unexpected error:")
         finally:
             # print report status
             GPIO.output(self.step_pins, False)
             GPIO.output(self.direction_pins, False)
-            if verbose:
-                # TODO: Add a counter for the number of steps travelled - maybe when I have encoders
-                print('\nMotor Run finished, Details:\n')
-                print(f'Direction = {direction}')
-                # print(f"Number of steps = {steps}")
-                print(f"Step Delay = {stepdelay}")
-                print(f"Initial delay = {initdelay}")
-                # print(f"Rotation of wheels in degrees = {degree_calc(steps)}")
-                # print(f"Total distance travelled = {steps_2_dist_wheel(steps)}m ")
 
     def go_steps(self, direction='forward', steps=100, stepdelay=.05, initdelay=.05, verbose=False):
         GPIO.output(self.direction_pins, directions[direction])
@@ -143,8 +132,7 @@ class Powertrain:
         pass
 
     def stop(self):
-        global drive
-        drive = False
+        self.drive = False
         GPIO.output(self.step_pins, False)
         GPIO.output(self.direction_pins, False)
 

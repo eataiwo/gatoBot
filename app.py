@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import RPi.GPIO as GPIO
-#import motors
+# import motors
 import socket
 from powertrain import Powertrain
 
@@ -27,23 +27,24 @@ def index():
     return render_template('index.html', server_ip=server_ip)
 
 
-
 @app.route('/<changepin>', methods=['POST'])
 def reroute(changepin):
     changePin = int(changepin)
 
     if changePin == 1:
-        dexter.go_remote('left', speed, 0.05)
+        dexter.remote_direction = 'left'
     elif changePin == 2:
-        dexter.go_remote('forward', speed, 0.05)
+        dexter.remote_direction = 'forward'
     elif changePin == 3:
-        dexter.go_remote('right', speed, 0.05)
+        dexter.remote_direction = 'right'
     elif changePin == 4:
-        dexter.go_remote('backward', speed, 0.05)
+        dexter.remote_direction = 'backward'
     elif changePin == 5:
         dexter.stop()
     else:
         print("Wrong command")
+    if not dexter.drive and changePin != 5:
+        dexter.go_remote(speed)
 
     response = make_response(redirect(url_for('index')))
     return response
